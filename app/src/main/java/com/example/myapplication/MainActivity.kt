@@ -1,11 +1,15 @@
 package com.example.myapplication
 
-import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -34,6 +39,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,8 +48,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,14 +63,15 @@ import coil.compose.AsyncImage
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.sin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val systemInDarkTheme = isSystemInDarkTheme()
-            var isDarkMode by remember { mutableStateOf(systemInDarkTheme) }
+            var isDarkMode by remember { mutableStateOf(true) }
             
             MyApplicationTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
@@ -103,6 +112,74 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun FerrisWheel(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "FerrisWheelRotation")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing)
+        ),
+        label = "Rotation"
+    )
+
+    val mainColor = MaterialTheme.colorScheme.primary
+    val cabinColor = MaterialTheme.colorScheme.secondary
+
+    Canvas(modifier = modifier.size(200.dp)) {
+        val center = Offset(size.width / 2, size.height / 2)
+        val radius = size.width / 2 * 0.8f
+        
+        // Draw main structure
+        drawCircle(
+            color = mainColor,
+            radius = radius,
+            center = center,
+            style = Stroke(width = 4.dp.toPx())
+        )
+        
+        // Draw spokes and cabins
+        rotate(rotation, pivot = center) {
+            for (i in 0 until 8) {
+                val angle = (i * 45f) * (Math.PI / 180f).toFloat()
+                val stopX = center.x + radius * cos(angle)
+                val stopY = center.y + radius * sin(angle)
+                
+                drawLine(
+                    color = mainColor,
+                    start = center,
+                    end = Offset(stopX, stopY),
+                    strokeWidth = 2.dp.toPx()
+                )
+                
+                // Draw cabin (staying upright)
+                rotate(-rotation - (i * 45f), pivot = Offset(stopX, stopY)) {
+                    drawRect(
+                        color = cabinColor,
+                        topLeft = Offset(stopX - 10.dp.toPx(), stopY - 5.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(20.dp.toPx(), 20.dp.toPx())
+                    )
+                }
+            }
+        }
+        
+        // Support structure
+        drawLine(
+            color = mainColor,
+            start = center,
+            end = Offset(center.x - radius, size.height),
+            strokeWidth = 4.dp.toPx()
+        )
+        drawLine(
+            color = mainColor,
+            start = center,
+            end = Offset(center.x + radius, size.height),
+            strokeWidth = 4.dp.toPx()
+        )
+    }
+}
+
+@Composable
 fun Greeting(
     name: String,
     isDarkMode: Boolean,
@@ -116,6 +193,28 @@ fun Greeting(
     val todos by todoViewModel.allTodos.collectAsState(initial = emptyList())
     val balance by wealthViewModel.currentBalance.collectAsState(initial = 0.0)
     var newTaskText by remember { mutableStateOf("") }
+    var showStockPopup by remember { mutableStateOf(false) }
+
+    if (showStockPopup) {
+        AlertDialog(
+            onDismissRequest = { showStockPopup = false },
+            title = { Text(text = "Stock Market Update") },
+            text = {
+                Column {
+                    Text("STONKS ARE UP! 🚀")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("GMNI: +420.69%")
+                    Text("TMY: +100.00%")
+                    Text("TODO: +12.5% (Invest in your productivity!)")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showStockPopup = false }) {
+                    Text("To the moon!")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -146,6 +245,8 @@ fun Greeting(
         }
         
         Spacer(modifier = Modifier.height(8.dp))
+
+        FerrisWheel(modifier = Modifier.padding(16.dp))
         
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -172,7 +273,10 @@ fun Greeting(
         Spacer(modifier = Modifier.height(16.dp))
         
         Button(
-            onClick = { wealthViewModel.addAMillion() },
+            onClick = { 
+                wealthViewModel.addAMillion() 
+                showStockPopup = true
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700), contentColor = Color.Black)
         ) {
