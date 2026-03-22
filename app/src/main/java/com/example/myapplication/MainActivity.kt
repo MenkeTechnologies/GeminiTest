@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,32 +11,36 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Gamepad
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -48,13 +53,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -94,6 +106,12 @@ class MainActivity : ComponentActivity() {
                                 isDarkMode = isDarkMode,
                                 onDarkModeChange = { isDarkMode = it },
                                 onNavigateToTommy = { navController.navigate("tommy") },
+                                onNavigateToBob = { navController.navigate("bob") },
+                                onNavigateToTest = { navController.navigate("test") },
+                                onNavigateToChess = { navController.navigate("chess") },
+                                onNavigateToTodoDetails = { navController.navigate("todo_details") },
+                                onNavigateToDaw = { navController.navigate("daw") },
+                                onNavigateToSnake = { navController.navigate("snake") },
                                 onLogout = {
                                     navController.navigate("login") {
                                         popUpTo("home") { inclusive = true }
@@ -104,10 +122,85 @@ class MainActivity : ComponentActivity() {
                         composable("tommy") {
                             TommyScreen(onNavigateBack = { navController.popBackStack() })
                         }
+                        composable("bob") {
+                            BobScreen(onNavigateBack = { navController.popBackStack() })
+                        }
+                        composable("test") {
+                            TestPage(onNavigateBack = { navController.popBackStack() })
+                        }
+                        composable("chess") {
+                            ChessPage(onNavigateBack = { navController.popBackStack() })
+                        }
+                        composable("todo_details") {
+                            TodoDetailsPage(onNavigateBack = { navController.popBackStack() })
+                        }
+                        composable("daw") {
+                            DawScreen(onNavigateBack = { navController.popBackStack() })
+                        }
+                        composable("snake") {
+                            SnakeScreen(onNavigateBack = { navController.popBackStack() })
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CyberpunkBanner() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .clip(CutCornerShape(topStart = 16.dp, bottomEnd = 16.dp))
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color(0xFFFF00FF), Color(0xFF00FFFF))
+                )
+            )
+            .border(
+                width = 2.dp,
+                color = Color.Yellow,
+                shape = CutCornerShape(topStart = 16.dp, bottomEnd = 16.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "NEO-DASHBOARD v2.0",
+                color = Color.Black,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = FontFamily.Monospace,
+                letterSpacing = 4.sp
+            )
+            Text(
+                text = "SYSTEM STATUS: OPERATIONAL",
+                color = Color.Black.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.labelLarge,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        // Glitch effect decorative lines
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Yellow.copy(alpha = 0.5f))
+                .align(Alignment.TopCenter)
+                .padding(top = 10.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Yellow.copy(alpha = 0.5f))
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 10.dp)
+        )
     }
 }
 
@@ -123,10 +216,10 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
         label = "Rotation"
     )
 
-    val mainColor = MaterialTheme.colorScheme.primary
-    val cabinColor = MaterialTheme.colorScheme.secondary
+    val mainColor = Color(0xFF00FFFF) // Neon Cyan
+    val cabinColor = Color(0xFFFF00FF) // Neon Magenta
 
-    Canvas(modifier = modifier.size(200.dp)) {
+    Canvas(modifier = modifier) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.width / 2 * 0.8f
         
@@ -135,7 +228,7 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
             color = mainColor,
             radius = radius,
             center = center,
-            style = Stroke(width = 4.dp.toPx())
+            style = Stroke(width = 2.dp.toPx())
         )
         
         // Draw spokes and cabins
@@ -149,15 +242,15 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
                     color = mainColor,
                     start = center,
                     end = Offset(stopX, stopY),
-                    strokeWidth = 2.dp.toPx()
+                    strokeWidth = 1.dp.toPx()
                 )
                 
                 // Draw cabin (staying upright)
                 rotate(-rotation - (i * 45f), pivot = Offset(stopX, stopY)) {
                     drawRect(
                         color = cabinColor,
-                        topLeft = Offset(stopX - 10.dp.toPx(), stopY - 5.dp.toPx()),
-                        size = androidx.compose.ui.geometry.Size(20.dp.toPx(), 20.dp.toPx())
+                        topLeft = Offset(stopX - 5.dp.toPx(), stopY - 5.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(10.dp.toPx(), 10.dp.toPx())
                     )
                 }
             }
@@ -168,14 +261,55 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
             color = mainColor,
             start = center,
             end = Offset(center.x - radius, size.height),
-            strokeWidth = 4.dp.toPx()
+            strokeWidth = 2.dp.toPx()
         )
         drawLine(
             color = mainColor,
             start = center,
             end = Offset(center.x + radius, size.height),
-            strokeWidth = 4.dp.toPx()
+            strokeWidth = 2.dp.toPx()
         )
+    }
+}
+
+@Composable
+fun HomeTile(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color(0xFF1A1A1A), // Dark Cyberpunk Grey
+    content: @Composable () -> Unit = {}
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier
+            .padding(4.dp)
+            .aspectRatio(1.3f)
+            .border(1.dp, Color(0xFF00FFFF).copy(alpha = 0.3f), CutCornerShape(bottomEnd = 8.dp)),
+        shape = CutCornerShape(bottomEnd = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = Color(0xFF00FFFF), // Cyan text
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                fontFamily = FontFamily.Monospace,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            content()
+        }
     }
 }
 
@@ -185,6 +319,12 @@ fun Greeting(
     isDarkMode: Boolean,
     onDarkModeChange: (Boolean) -> Unit,
     onNavigateToTommy: () -> Unit,
+    onNavigateToBob: () -> Unit,
+    onNavigateToTest: () -> Unit,
+    onNavigateToChess: () -> Unit,
+    onNavigateToTodoDetails: () -> Unit,
+    onNavigateToDaw: () -> Unit,
+    onNavigateToSnake: () -> Unit,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
     todoViewModel: TodoViewModel = viewModel(),
@@ -192,156 +332,256 @@ fun Greeting(
 ) {
     val todos by todoViewModel.allTodos.collectAsState(initial = emptyList())
     val balance by wealthViewModel.currentBalance.collectAsState(initial = 0.0)
-    var newTaskText by remember { mutableStateOf("") }
     var showStockPopup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (showStockPopup) {
         AlertDialog(
             onDismissRequest = { showStockPopup = false },
-            title = { Text(text = "Stock Market Update") },
+            containerColor = Color(0xFF121212),
+            title = { 
+                Text(
+                    "STOCK MARKET SYNC", 
+                    color = Color.Yellow, 
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                ) 
+            },
             text = {
                 Column {
-                    Text("STONKS ARE UP! 🚀")
+                    Text("STONKS ARE UP! 🚀", color = Color.White)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("GMNI: +420.69%")
-                    Text("TMY: +100.00%")
-                    Text("TODO: +12.5% (Invest in your productivity!)")
+                    Text("GMNI: +420.69%", color = Color(0xFF00FF00))
+                    Text("TMY: +100.00%", color = Color(0xFF00FF00))
+                    Text("TODO: +12.5%", color = Color(0xFF00FF00))
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showStockPopup = false }) {
-                    Text("To the moon!")
+                    Text("ACKNOWLEDGE", color = Color(0xFF00FFFF))
                 }
             }
         )
     }
 
-    Column(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = modifier
             .fillMaxSize()
+            .background(Color.Black) // True Cyberpunk black
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = "https://placedog.net/100/100?random",
-                contentDescription = "Cool Dog",
-                modifier = Modifier.size(60.dp)
+        // Cyberpunk Banner
+        item(span = { GridItemSpan(2) }) {
+            CyberpunkBanner()
+        }
+
+        // Dashboard Heading
+        item(span = { GridItemSpan(2) }) {
+            Text(
+                text = "> INITIALIZING DASHBOARD_V2.0",
+                style = MaterialTheme.typography.labelLarge,
+                color = Color(0xFF00FFFF),
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
-            
-            Column(horizontalAlignment = Alignment.End) {
-                Text(text = "Wealth Balance", style = MaterialTheme.typography.labelSmall)
+        }
+
+        item {
+            HomeTile("BALANCE", onClick = {}) {
                 Text(
                     text = NumberFormat.getCurrencyInstance(Locale.US).format(balance),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFF4CAF50),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF00FF00), // Matrix green
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        item {
+            HomeTile("RELAX", onClick = {}) {
+                FerrisWheel(modifier = Modifier.size(60.dp))
+            }
+        }
+
+        item { HomeTile("TOMMY_OS", onClick = onNavigateToTommy) }
+        item { HomeTile("BOB_CORE", onClick = onNavigateToBob) }
+        item { HomeTile("TEST_LAB", onClick = onNavigateToTest) }
+        item { HomeTile("CHESS_NET", onClick = onNavigateToChess) }
+        
+        item {
+            HomeTile("GAME_INIT", onClick = onNavigateToSnake) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.Gamepad,
+                        contentDescription = null,
+                        tint = Color(0xFF00FF00), // Neon Green
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = "SNAKE",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        }
+
+        item {
+            HomeTile("TERMINAL", onClick = {
+                val intent = Intent(Intent.ACTION_MAIN).apply {
+                    addCategory(Intent.CATEGORY_LAUNCHER)
+                    setPackage("com.android.terminal")
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    // Fallback or log if terminal app not found
+                }
+            }) {
+                Text(
+                    text = ">_",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color(0xFF00FFFF),
+                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
-        
-        Spacer(modifier = Modifier.height(8.dp))
 
-        FerrisWheel(modifier = Modifier.padding(16.dp))
-        
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Dark Mode")
-            Spacer(modifier = Modifier.width(8.dp))
-            Switch(checked = isDarkMode, onCheckedChange = onDarkModeChange)
-        }
-
-        Text(text = "Hello $name!", style = MaterialTheme.typography.headlineMedium)
-        
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = onNavigateToTommy, modifier = Modifier.weight(1f)) {
-                Text("Tommy's Page")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedButton(onClick = onLogout, modifier = Modifier.weight(1f)) {
-                Text("Logout")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Button(
-            onClick = { 
-                wealthViewModel.addAMillion() 
-                showStockPopup = true
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700), contentColor = Color.Black)
-        ) {
-            Icon(Icons.Default.Star, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("MAKE ME RICH")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider()
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = "Your Todo List", style = MaterialTheme.typography.titleLarge)
-        
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = newTaskText,
-                onValueChange = { newTaskText = it },
-                label = { Text("New task") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            IconButton(onClick = {
-                if (newTaskText.isNotBlank()) {
-                    todoViewModel.addTodo(newTaskText)
-                    newTaskText = ""
+        item {
+            HomeTile("SHOWER_SYNC", onClick = {}) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "|||",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color(0xFF00FFFF),
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "CLEANSE",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
                 }
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Add task")
             }
         }
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(todos) { todo ->
-                TodoItem(
-                    todo = todo,
-                    onCheckedChange = { isChecked ->
-                        todoViewModel.updateTodo(todo.copy(isDone = isChecked))
-                    },
-                    onDelete = {
-                        todoViewModel.deleteTodo(todo)
-                    }
+        item {
+            HomeTile("AUDIO_ENG", onClick = onNavigateToDaw) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.MusicNote,
+                        contentDescription = null,
+                        tint = Color(0xFFFF00FF), // Neon Magenta
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = "PRODUCE",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        }
+
+        item {
+            HomeTile("DEV_CORE", onClick = {}) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.Code,
+                        contentDescription = null,
+                        tint = Color(0xFFFFFF00), // Neon Yellow
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = "COMPILE",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        }
+        
+        item {
+            HomeTile("DARK_MODE", onClick = { onDarkModeChange(!isDarkMode) }) {
+                Switch(
+                    checked = isDarkMode,
+                    onCheckedChange = onDarkModeChange,
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
-    }
-}
+        
+        item {
+            HomeTile(
+                "WEALTH_GEN",
+                onClick = {
+                    wealthViewModel.addAMillion()
+                    showStockPopup = true
+                },
+                containerColor = Color(0xFF1A1A1A)
+            ) {
+                Icon(
+                    Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color.Yellow,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+        
+        item {
+            HomeTile("TASK_SYNC", onClick = onNavigateToTodoDetails) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.List, 
+                        contentDescription = null, 
+                        tint = Color(0xFFFF00FF), // Magenta
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        "${todos.count { !it.isDone }} PENDING", 
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        }
 
-@Composable
-fun TodoItem(todo: Todo, onCheckedChange: (Boolean) -> Unit, onDelete: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(checked = todo.isDone, onCheckedChange = onCheckedChange)
-        Text(
-            text = todo.task,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyLarge
-        )
-        IconButton(onClick = onDelete) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete task")
+        item {
+            HomeTile("QUICK_ADD", onClick = onNavigateToTodoDetails) {
+                Icon(
+                    Icons.Default.Add, 
+                    contentDescription = "Add task", 
+                    tint = Color(0xFF00FFFF), 
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
+
+        // Logout
+        item(span = { GridItemSpan(2) }) {
+            OutlinedButton(
+                onClick = onLogout,
+                shape = CutCornerShape(topStart = 8.dp, bottomEnd = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .border(1.dp, Color(0xFFFF0000), CutCornerShape(topStart = 8.dp, bottomEnd = 8.dp))
+            ) {
+                Text("TERMINATE SESSION", color = Color(0xFFFF0000), fontFamily = FontFamily.Monospace)
+            }
         }
     }
 }
@@ -352,9 +592,15 @@ fun GreetingPreview() {
     MyApplicationTheme {
         Greeting(
             name = "Android",
-            isDarkMode = false,
+            isDarkMode = true,
             onDarkModeChange = {},
             onNavigateToTommy = {},
+            onNavigateToBob = {},
+            onNavigateToTest = {},
+            onNavigateToChess = {},
+            onNavigateToTodoDetails = {},
+            onNavigateToDaw = {},
+            onNavigateToSnake = {},
             onLogout = {}
         )
     }
