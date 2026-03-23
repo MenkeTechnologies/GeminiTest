@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -25,35 +24,28 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
-    val context = LocalContext.current
-    val db = remember { AppDatabase.getDatabase(context) }
-    val scope = rememberCoroutineScope()
-
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isLogin by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf("") }
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    viewModel: LoginViewModel = viewModel()
+) {
+    val username = viewModel.username
+    val password = viewModel.password
+    val isLogin = viewModel.isLogin
+    val errorMessage = viewModel.errorMessage
 
     val neonCyan = Color(0xFF00FFFF)
     val neonMagenta = Color(0xFFFF00FF)
@@ -116,7 +108,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
             OutlinedTextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = { viewModel.onUsernameChange(it) },
                 label = { Text("ID_USERNAME", fontFamily = FontFamily.Monospace) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -137,7 +129,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { viewModel.onPasswordChange(it) },
                 label = { Text("CODE_ENCRYPTION", fontFamily = FontFamily.Monospace) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
@@ -168,25 +160,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = {
-                    scope.launch {
-                        val user = db.userDao().getUserByUsername(username)
-                        if (isLogin) {
-                            if (user != null && user.passwordHash == password) {
-                                onLoginSuccess()
-                            } else {
-                                errorMessage = "CREDENTIAL_MISMATCH"
-                            }
-                        } else {
-                            if (user == null) {
-                                db.userDao().insertUser(User(username, password))
-                                onLoginSuccess()
-                            } else {
-                                errorMessage = "SUBJECT_EXISTS"
-                            }
-                        }
-                    }
-                },
+                onClick = { viewModel.performAction(onLoginSuccess) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -208,7 +182,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
-                onClick = { isLogin = !isLogin },
+                onClick = { viewModel.toggleLoginMode() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(

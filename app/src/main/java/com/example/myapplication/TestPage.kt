@@ -24,20 +24,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlin.math.abs
 
 enum class PieceType { RED, BLACK }
 data class Position(val row: Int, val col: Int)
@@ -46,78 +40,13 @@ data class Piece(val type: PieceType, val isKing: Boolean = false)
 @Composable
 fun TestPage(
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CheckersViewModel = viewModel()
 ) {
-    var board by remember { mutableStateOf(initialBoard()) }
-    var selectedPosition by remember { mutableStateOf<Position?>(null) }
-    var currentTurn by remember { mutableStateOf(PieceType.BLACK) }
-    var message by remember { mutableStateOf("Black's Turn") }
-
-    fun handleSquareClick(pos: Position) {
-        val pieceAtPos = board[pos]
-
-        if (selectedPosition == null) {
-            // Select a piece
-            if (pieceAtPos != null && pieceAtPos.type == currentTurn) {
-                selectedPosition = pos
-            }
-        } else {
-            val from = selectedPosition!!
-            val piece = board[from]!!
-            
-            if (pos == from) {
-                selectedPosition = null
-                return
-            }
-
-            // Simple movement logic
-            val rowDiff = pos.row - from.row
-            val colDiff = pos.col - from.col
-            val isForward = if (piece.type == PieceType.BLACK) rowDiff < 0 else rowDiff > 0
-            val canMoveAnywhere = piece.isKing
-
-            // Check if destination is empty and diagonal
-            if (board[pos] == null && abs(colDiff) == abs(rowDiff)) {
-                
-                // Normal move (1 square)
-                if (abs(rowDiff) == 1 && (isForward || canMoveAnywhere)) {
-                    val newBoard = board.toMutableMap()
-                    newBoard.remove(from)
-                    var updatedPiece = piece
-                    if ((piece.type == PieceType.BLACK && pos.row == 0) || (piece.type == PieceType.RED && pos.row == 7)) {
-                        updatedPiece = piece.copy(isKing = true)
-                    }
-                    newBoard[pos] = updatedPiece
-                    board = newBoard
-                    currentTurn = if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
-                    selectedPosition = null
-                    message = "${currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }}'s Turn"
-                } 
-                // Jump (2 squares)
-                else if (abs(rowDiff) == 2 && (isForward || canMoveAnywhere)) {
-                    val midPos = Position((from.row + pos.row) / 2, (from.col + pos.col) / 2)
-                    val midPiece = board[midPos]
-                    if (midPiece != null && midPiece.type != piece.type) {
-                        val newBoard = board.toMutableMap()
-                        newBoard.remove(from)
-                        newBoard.remove(midPos)
-                        var updatedPiece = piece
-                        if ((piece.type == PieceType.BLACK && pos.row == 0) || (piece.type == PieceType.RED && pos.row == 7)) {
-                            updatedPiece = piece.copy(isKing = true)
-                        }
-                        newBoard[pos] = updatedPiece
-                        board = newBoard
-                        currentTurn = if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
-                        selectedPosition = null
-                        message = "${currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }}'s Turn"
-                    }
-                }
-            } else if (pieceAtPos != null && pieceAtPos.type == currentTurn) {
-                // Change selection
-                selectedPosition = pos
-            }
-        }
-    }
+    val board = viewModel.board
+    val selectedPosition = viewModel.selectedPosition
+    val currentTurn = viewModel.currentTurn
+    val message = viewModel.message
 
     Scaffold(
         modifier = modifier.fillMaxSize()
@@ -160,7 +89,7 @@ fun TestPage(
                                     isDark = isDark,
                                     piece = board[pos],
                                     isSelected = selectedPosition == pos,
-                                    onClick = { handleSquareClick(pos) },
+                                    onClick = { viewModel.handleSquareClick(pos) },
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -172,12 +101,7 @@ fun TestPage(
             Spacer(modifier = Modifier.height(16.dp))
             
             Row {
-                Button(onClick = {
-                    board = initialBoard()
-                    selectedPosition = null
-                    currentTurn = PieceType.BLACK
-                    message = "Black's Turn"
-                }) {
+                Button(onClick = { viewModel.resetGame() }) {
                     Text("Reset")
                 }
                 Spacer(modifier = Modifier.size(16.dp))

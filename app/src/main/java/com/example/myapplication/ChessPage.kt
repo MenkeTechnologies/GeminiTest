@@ -20,10 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 enum class ChessPieceColor { WHITE, BLACK }
@@ -40,35 +37,12 @@ data class ChessPiece(val type: ChessPieceType, val color: ChessPieceColor)
 @Composable
 fun ChessPage(
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ChessViewModel = viewModel()
 ) {
-    var board by remember { mutableStateOf(initialChessBoard()) }
-    var selectedPosition by remember { mutableStateOf<Position?>(null) }
-    var currentTurn by remember { mutableStateOf(ChessPieceColor.WHITE) }
-
-    fun handleSquareClick(pos: Position) {
-        val pieceAtPos = board[pos]
-
-        if (selectedPosition == null) {
-            if (pieceAtPos != null && pieceAtPos.color == currentTurn) {
-                selectedPosition = pos
-            }
-        } else {
-            val from = selectedPosition!!
-            if (from == pos) {
-                selectedPosition = null
-                return
-            }
-
-            // Simple movement (no full chess rules for now, just moving)
-            val newBoard = board.toMutableMap()
-            newBoard[pos] = board[from]!!
-            newBoard.remove(from)
-            board = newBoard
-            currentTurn = if (currentTurn == ChessPieceColor.WHITE) ChessPieceColor.BLACK else ChessPieceColor.WHITE
-            selectedPosition = null
-        }
-    }
+    val board = viewModel.board
+    val selectedPosition = viewModel.selectedPosition
+    val currentTurn = viewModel.currentTurn
 
     Scaffold(
         modifier = modifier.fillMaxSize()
@@ -111,7 +85,7 @@ fun ChessPage(
                                     isDark = isDark,
                                     piece = board[pos],
                                     isSelected = selectedPosition == pos,
-                                    onClick = { handleSquareClick(pos) },
+                                    onClick = { viewModel.handleSquareClick(pos) },
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -123,11 +97,7 @@ fun ChessPage(
             Spacer(modifier = Modifier.height(24.dp))
             
             Row {
-                Button(onClick = {
-                    board = initialChessBoard()
-                    selectedPosition = null
-                    currentTurn = ChessPieceColor.WHITE
-                }) {
+                Button(onClick = { viewModel.resetGame() }) {
                     Text("Reset")
                 }
                 Spacer(modifier = Modifier.size(16.dp))
@@ -178,7 +148,7 @@ fun getPieceUnicode(piece: ChessPiece): String {
         ChessPieceColor.WHITE -> when (piece.type) {
             ChessPieceType.PAWN -> "♙"
             ChessPieceType.ROOK -> "♖"
-            ChessPieceType.KNIGHT -> "♙"
+            ChessPieceType.KNIGHT -> "♘"
             ChessPieceType.BISHOP -> "♗"
             ChessPieceType.QUEEN -> "♕"
             ChessPieceType.KING -> "♔"

@@ -1,13 +1,24 @@
 package com.example.myapplication
 
-import android.media.AudioAttributes
-import android.media.AudioFormat
-import android.media.AudioTrack
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CutCornerShape
@@ -15,8 +26,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -26,84 +46,22 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DawScreen(onNavigateBack: () -> Unit) {
+fun DawScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: DawViewModel = viewModel()
+) {
     val neonCyan = Color(0xFF00FFFF)
     val neonMagenta = Color(0xFFFF00FF)
     val neonGreen = Color(0xFF00FF00)
 
-    var isPlaying by remember { mutableStateOf(false) }
-    val trackVolumes = remember { mutableStateListOf(0.5f, 0.4f, 0.3f, 0.6f) }
-    val trackNames = listOf("NEON_LEAD", "CYBER_BASS", "GLITCH_BEAT", "ATMOS_VOX")
-    val scope = rememberCoroutineScope()
-
-    // Synth Engine Logic
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            withContext(Dispatchers.Default) {
-                val sampleRate = 44100
-                val minBufferSize = AudioTrack.getMinBufferSize(
-                    sampleRate,
-                    AudioFormat.CHANNEL_OUT_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT
-                )
-                
-                val audioTrack = AudioTrack.Builder()
-                    .setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-                    )
-                    .setAudioFormat(
-                        AudioFormat.Builder()
-                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                            .setSampleRate(sampleRate)
-                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                            .build()
-                    )
-                    .setBufferSizeInBytes(minBufferSize)
-                    .setTransferMode(AudioTrack.MODE_STREAM)
-                    .build()
-
-                audioTrack.play()
-                
-                val buffer = ShortArray(minBufferSize)
-                var angle = 0.0
-                val frequencies = listOf(440.0, 110.0, 880.0, 220.0) // A4, A2, A5, A3
-
-                try {
-                    while (isActive && isPlaying) {
-                        for (i in buffer.indices) {
-                            var sample = 0.0
-                            // Mix tracks
-                            for (t in frequencies.indices) {
-                                val vol = trackVolumes[t]
-                                val freq = frequencies[t]
-                                sample += vol * sin(2.0 * Math.PI * angle * freq / sampleRate)
-                            }
-                            // Hard clipping / limiting
-                            sample = sample.coerceIn(-1.0, 1.0)
-                            buffer[i] = (sample * Short.MAX_VALUE).toInt().toShort()
-                            angle += 1.0
-                        }
-                        audioTrack.write(buffer, 0, buffer.size)
-                    }
-                } finally {
-                    audioTrack.stop()
-                    audioTrack.release()
-                }
-            }
-        }
-    }
+    val isPlaying = viewModel.isPlaying
+    val trackVolumes = viewModel.trackVolumes
+    val trackNames = viewModel.trackNames
 
     Scaffold(
         topBar = {
@@ -141,10 +99,10 @@ fun DawScreen(onNavigateBack: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { isPlaying = true }) {
+                IconButton(onClick = { if (!isPlaying) viewModel.togglePlayback() }) {
                     Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = if (isPlaying) neonGreen else Color.Gray)
                 }
-                IconButton(onClick = { isPlaying = false }) {
+                IconButton(onClick = { if (isPlaying) viewModel.togglePlayback() }) {
                     Icon(Icons.Default.Stop, contentDescription = "Stop", tint = if (!isPlaying) neonMagenta else Color.Gray)
                 }
                 Text("BPM: 128", color = neonCyan, fontFamily = FontFamily.Monospace)
@@ -168,7 +126,7 @@ fun DawScreen(onNavigateBack: () -> Unit) {
                     HackerTrackItem(
                         name = name, 
                         volume = trackVolumes[index],
-                        onVolumeChange = { trackVolumes[index] = it },
+                        onVolumeChange = { viewModel.updateVolume(index, it) },
                         neonCyan = neonCyan, 
                         neonMagenta = neonMagenta,
                         isPlaying = isPlaying
@@ -227,14 +185,15 @@ fun HackerTrackItem(
 
 @Composable
 fun TrackVisualizer(color: Color, volume: Float) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "TrackVisualizer")
     val phase by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(500, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        )
+        ),
+        label = "phase"
     )
 
     Canvas(modifier = Modifier.fillMaxWidth().height(10.dp)) {
@@ -254,13 +213,14 @@ fun TrackVisualizer(color: Color, volume: Float) {
 
 @Composable
 fun SpectrumAnalyzer(color: Color) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "SpectrumAnalyzer")
     val phase by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = LinearEasing)
-        )
+        ),
+        label = "phase"
     )
 
     Canvas(modifier = Modifier.fillMaxWidth().height(60.dp).border(1.dp, color.copy(alpha = 0.2f))) {
