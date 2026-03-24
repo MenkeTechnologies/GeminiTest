@@ -54,7 +54,11 @@ fun SnakeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = neonCyan)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = neonCyan
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
@@ -89,7 +93,7 @@ fun SnakeScreen(
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val cellSize = size.width / gridSize
-                    
+
                     // Draw Food
                     drawRect(
                         color = neonMagenta,
@@ -115,11 +119,19 @@ fun SnakeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("CORE_CRITICAL: GAME OVER", color = Color.Red, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+                            Text(
+                                "CORE_CRITICAL: GAME OVER",
+                                color = Color.Red,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold
+                            )
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = { viewModel.resetGame() },
-                                colors = ButtonDefaults.buttonColors(containerColor = neonCyan, contentColor = Color.Black),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = neonCyan,
+                                    contentColor = Color.Black
+                                ),
                                 shape = CutCornerShape(8.dp)
                             ) {
                                 Icon(Icons.Default.Refresh, contentDescription = null)
@@ -136,30 +148,58 @@ fun SnakeScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     onClick = { viewModel.updateDirection(Direction.UP) },
-                    modifier = Modifier.border(1.dp, neonCyan, CutCornerShape(4.dp)).size(64.dp)
+                    modifier = Modifier
+                        .border(1.dp, neonCyan, CutCornerShape(4.dp))
+                        .size(64.dp)
                 ) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Up", tint = neonCyan, modifier = Modifier.size(48.dp))
+                    Icon(
+                        Icons.Default.KeyboardArrowUp,
+                        contentDescription = "Up",
+                        tint = neonCyan,
+                        modifier = Modifier.size(48.dp)
+                    )
                 }
                 Row {
                     IconButton(
                         onClick = { viewModel.updateDirection(Direction.LEFT) },
-                        modifier = Modifier.border(1.dp, neonCyan, CutCornerShape(4.dp)).size(64.dp)
+                        modifier = Modifier
+                            .border(1.dp, neonCyan, CutCornerShape(4.dp))
+                            .size(64.dp)
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Left", tint = neonCyan, modifier = Modifier.size(48.dp))
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Left",
+                            tint = neonCyan,
+                            modifier = Modifier.size(48.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(64.dp))
                     IconButton(
                         onClick = { viewModel.updateDirection(Direction.RIGHT) },
-                        modifier = Modifier.border(1.dp, neonCyan, CutCornerShape(4.dp)).size(64.dp)
+                        modifier = Modifier
+                            .border(1.dp, neonCyan, CutCornerShape(4.dp))
+                            .size(64.dp)
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Right", tint = neonCyan, modifier = Modifier.size(48.dp))
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Right",
+                            tint = neonCyan,
+                            modifier = Modifier.size(48.dp)
+                        )
                     }
                 }
                 IconButton(
                     onClick = { viewModel.updateDirection(Direction.DOWN) },
-                    modifier = Modifier.border(1.dp, neonCyan, CutCornerShape(4.dp)).size(64.dp)
+                    modifier = Modifier
+                        .border(1.dp, neonCyan, CutCornerShape(4.dp))
+                        .size(64.dp)
                 ) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Down", tint = neonCyan, modifier = Modifier.size(48.dp))
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Down",
+                        tint = neonCyan,
+                        modifier = Modifier.size(48.dp)
+                    )
                 }
             }
         }

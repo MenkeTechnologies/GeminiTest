@@ -62,7 +62,11 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(32.dp)
-                .border(1.dp, neonCyan.copy(alpha = 0.1f), CutCornerShape(topStart = 40.dp, bottomEnd = 40.dp))
+                .border(
+                    1.dp,
+                    neonCyan.copy(alpha = 0.1f),
+                    CutCornerShape(topStart = 40.dp, bottomEnd = 40.dp)
+                )
         )
 
         Column(
@@ -112,7 +116,13 @@ fun LoginScreen(
                 label = { Text("ID_USERNAME", fontFamily = FontFamily.Monospace) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = neonCyan) },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        tint = neonCyan
+                    )
+                },
                 shape = CutCornerShape(bottomEnd = 12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = neonCyan,
@@ -124,7 +134,7 @@ fun LoginScreen(
                     unfocusedTextColor = Color.White
                 )
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
@@ -134,7 +144,13 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = neonMagenta) },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = neonMagenta
+                    )
+                },
                 shape = CutCornerShape(bottomEnd = 12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = neonMagenta,
@@ -193,7 +209,7 @@ fun LoginScreen(
                 )
             }
         }
-        
+
         // Bottom decorative line
         Box(
             modifier = Modifier

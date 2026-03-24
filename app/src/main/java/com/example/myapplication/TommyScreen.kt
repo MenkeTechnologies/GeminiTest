@@ -189,15 +189,27 @@ fun KanbanTaskItem(
             ) {
                 if (onMoveBack != null) {
                     IconButton(onClick = onMoveBack, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Move Back", modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Move Back",
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 }
                 IconButton(onClick = onDelete, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", modifier = Modifier.size(16.dp))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
                 if (onMoveForward != null) {
                     IconButton(onClick = onMoveForward, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Move Forward", modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Move Forward",
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 }
             }

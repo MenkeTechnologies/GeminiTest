@@ -65,18 +65,18 @@ fun TodoDetailsPage(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { 
+                    title = {
                         Text(
-                            "TASK_MANIFEST.sh", 
+                            "TASK_MANIFEST.sh",
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
                             color = neonCyan
-                        ) 
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack, 
+                                Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
                                 tint = neonCyan
                             )
@@ -87,7 +87,9 @@ fun TodoDetailsPage(
                         titleContentColor = neonCyan
                     )
                 )
-                Canvas(modifier = Modifier.fillMaxWidth().height(1.dp)) {
+                Canvas(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)) {
                     drawLine(
                         color = neonCyan.copy(alpha = 0.3f),
                         start = Offset(0f, 0f),
@@ -170,7 +172,7 @@ fun TodoDetailsPage(
                     )
                 }
             }
-            
+
             Text(
                 text = "SYSTEM_LOG: ${todos.size} ENTRIES LOADED",
                 color = neonCyan.copy(alpha = 0.5f),
@@ -184,8 +186,8 @@ fun TodoDetailsPage(
 
 @Composable
 fun HackerTodoItem(
-    todo: Todo, 
-    onCheckedChange: (Boolean) -> Unit, 
+    todo: Todo,
+    onCheckedChange: (Boolean) -> Unit,
     onDelete: () -> Unit,
     neonCyan: Color,
     neonGreen: Color
@@ -199,7 +201,7 @@ fun HackerTodoItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = todo.isDone, 
+            checked = todo.isDone,
             onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = neonGreen,

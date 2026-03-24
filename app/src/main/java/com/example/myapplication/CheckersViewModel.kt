@@ -52,9 +52,11 @@ class CheckersViewModel : ViewModel() {
                     }
                     newBoard[pos] = updatedPiece
                     board = newBoard
-                    currentTurn = if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
+                    currentTurn =
+                        if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
                     selectedPosition = null
-                    message = "${currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }}'s Turn"
+                    message =
+                        "${currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }}'s Turn"
                 }
                 // Jump (2 squares)
                 else if (abs(rowDiff) == 2 && (isForward || canMoveAnywhere)) {
@@ -70,9 +72,12 @@ class CheckersViewModel : ViewModel() {
                         }
                         newBoard[pos] = updatedPiece
                         board = newBoard
-                        currentTurn = if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
+                        currentTurn =
+                            if (currentTurn == PieceType.BLACK) PieceType.RED else PieceType.BLACK
                         selectedPosition = null
-                        message = "${currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }}'s Turn"
+                        message = "${
+                            currentTurn.name.lowercase().replaceFirstChar { it.uppercase() }
+                        }'s Turn"
                     }
                 }
             } else if (pieceAtPos != null && pieceAtPos.type == currentTurn) {

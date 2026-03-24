@@ -5,7 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class, Todo::class, KanbanTask::class, WealthRecord::class], version = 4)
+@Database(
+    entities = [User::class, Todo::class, KanbanTask::class, WealthRecord::class],
+    version = 4
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun todoDao(): TodoDao
@@ -23,8 +26,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     context.getString(R.string.database_name)
                 )
-                .fallbackToDestructiveMigration()
-                .build()
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

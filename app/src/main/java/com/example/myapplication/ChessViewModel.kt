@@ -32,7 +32,8 @@ class ChessViewModel : ViewModel() {
             newBoard[pos] = board[from]!!
             newBoard.remove(from)
             board = newBoard
-            currentTurn = if (currentTurn == ChessPieceColor.WHITE) ChessPieceColor.BLACK else ChessPieceColor.WHITE
+            currentTurn =
+                if (currentTurn == ChessPieceColor.WHITE) ChessPieceColor.BLACK else ChessPieceColor.WHITE
             selectedPosition = null
         }
     }

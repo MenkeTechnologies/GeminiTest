@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             var isDarkMode by remember { mutableStateOf(true) }
-            
+
             MyApplicationTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -116,8 +116,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("login") {
                                         popUpTo("home") { inclusive = true }
                                     }
-                                }
-                            )
+                                })
                         }
                         composable("tommy") {
                             TommyScreen(onNavigateBack = { navController.popBackStack() })
@@ -163,8 +162,7 @@ fun CyberpunkBanner() {
                 width = 2.dp,
                 color = Color.Yellow,
                 shape = CutCornerShape(topStart = 16.dp, bottomEnd = 16.dp)
-            ),
-        contentAlignment = Alignment.Center
+            ), contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -183,7 +181,7 @@ fun CyberpunkBanner() {
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         // Glitch effect decorative lines
         Box(
             modifier = Modifier
@@ -208,12 +206,9 @@ fun CyberpunkBanner() {
 fun FerrisWheel(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "FerrisWheelRotation")
     val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
+        initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(
             animation = tween(3000, easing = LinearEasing)
-        ),
-        label = "Rotation"
+        ), label = "Rotation"
     )
 
     val mainColor = Color(0xFF00FFFF) // Neon Cyan
@@ -222,29 +217,26 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.width / 2 * 0.8f
-        
+
         // Draw main structure
         drawCircle(
-            color = mainColor,
-            radius = radius,
-            center = center,
-            style = Stroke(width = 2.dp.toPx())
+            color = mainColor, radius = radius, center = center, style = Stroke(width = 2.dp.toPx())
         )
-        
+
         // Draw spokes and cabins
         rotate(rotation, pivot = center) {
             for (i in 0 until 8) {
                 val angle = (i * 45f) * (Math.PI / 180f).toFloat()
                 val stopX = center.x + radius * cos(angle)
                 val stopY = center.y + radius * sin(angle)
-                
+
                 drawLine(
                     color = mainColor,
                     start = center,
                     end = Offset(stopX, stopY),
                     strokeWidth = 1.dp.toPx()
                 )
-                
+
                 // Draw cabin (staying upright)
                 rotate(-rotation - (i * 45f), pivot = Offset(stopX, stopY)) {
                     drawRect(
@@ -255,7 +247,7 @@ fun FerrisWheel(modifier: Modifier = Modifier) {
                 }
             }
         }
-        
+
         // Support structure
         drawLine(
             color = mainColor,
@@ -339,13 +331,13 @@ fun Greeting(
         AlertDialog(
             onDismissRequest = { showStockPopup = false },
             containerColor = Color(0xFF121212),
-            title = { 
+            title = {
                 Text(
-                    "STOCK MARKET SYNC", 
-                    color = Color.Yellow, 
+                    "STOCK MARKET SYNC",
+                    color = Color.Yellow,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold
-                ) 
+                )
             },
             text = {
                 Column {
@@ -360,8 +352,7 @@ fun Greeting(
                 TextButton(onClick = { showStockPopup = false }) {
                     Text("ACKNOWLEDGE", color = Color(0xFF00FFFF))
                 }
-            }
-        )
+            })
     }
 
     LazyVerticalGrid(
@@ -412,7 +403,7 @@ fun Greeting(
         item { HomeTile("BOB_CORE", onClick = onNavigateToBob) }
         item { HomeTile("TEST_LAB", onClick = onNavigateToTest) }
         item { HomeTile("CHESS_NET", onClick = onNavigateToChess) }
-        
+
         item {
             HomeTile("GAME_INIT", onClick = onNavigateToSnake) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -511,7 +502,7 @@ fun Greeting(
                 }
             }
         }
-        
+
         item {
             HomeTile("DARK_MODE", onClick = { onDarkModeChange(!isDarkMode) }) {
                 Switch(
@@ -521,15 +512,13 @@ fun Greeting(
                 )
             }
         }
-        
+
         item {
             HomeTile(
-                "WEALTH_GEN",
-                onClick = {
+                "WEALTH_GEN", onClick = {
                     wealthViewModel.addAMillion()
                     showStockPopup = true
-                },
-                containerColor = Color(0xFF1A1A1A)
+                }, containerColor = Color(0xFF1A1A1A)
             ) {
                 Icon(
                     Icons.Default.Star,
@@ -539,18 +528,18 @@ fun Greeting(
                 )
             }
         }
-        
+
         item {
             HomeTile("TASK_SYNC", onClick = onNavigateToTodoDetails) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        Icons.Default.List, 
-                        contentDescription = null, 
+                        Icons.Default.List,
+                        contentDescription = null,
                         tint = Color(0xFFFF00FF), // Magenta
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        "${todos.count { !it.isDone }} PENDING", 
+                        "${todos.count { !it.isDone }} PENDING",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White,
                         fontFamily = FontFamily.Monospace
@@ -562,9 +551,9 @@ fun Greeting(
         item {
             HomeTile("QUICK_ADD", onClick = onNavigateToTodoDetails) {
                 Icon(
-                    Icons.Default.Add, 
-                    contentDescription = "Add task", 
-                    tint = Color(0xFF00FFFF), 
+                    Icons.Default.Add,
+                    contentDescription = "Add task",
+                    tint = Color(0xFF00FFFF),
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -578,9 +567,15 @@ fun Greeting(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
-                    .border(1.dp, Color(0xFFFF0000), CutCornerShape(topStart = 8.dp, bottomEnd = 8.dp))
+                    .border(
+                        1.dp, Color(0xFFFF0000), CutCornerShape(topStart = 8.dp, bottomEnd = 8.dp)
+                    )
             ) {
-                Text("TERMINATE SESSION", color = Color(0xFFFF0000), fontFamily = FontFamily.Monospace)
+                Text(
+                    "TERMINATE SESSION",
+                    color = Color(0xFFFF0000),
+                    fontFamily = FontFamily.Monospace
+                )
             }
         }
     }
@@ -601,7 +596,6 @@ fun GreetingPreview() {
             onNavigateToTodoDetails = {},
             onNavigateToDaw = {},
             onNavigateToSnake = {},
-            onLogout = {}
-        )
+            onLogout = {})
     }
 }

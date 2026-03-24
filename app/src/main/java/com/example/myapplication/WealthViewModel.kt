@@ -13,12 +13,13 @@ class WealthViewModel(application: Application) : AndroidViewModel(application) 
 
     fun makeMeRich() {
         viewModelScope.launch {
-            val currentWealth = wealthDao.getWealth().map { it?.balance ?: 0.0 }.collect { balance ->
-                 wealthDao.insertWealth(WealthRecord(balance = balance + 1000000.0))
-            }
+            val currentWealth =
+                wealthDao.getWealth().map { it?.balance ?: 0.0 }.collect { balance ->
+                    wealthDao.insertWealth(WealthRecord(balance = balance + 1000000.0))
+                }
         }
     }
-    
+
     // Improved makeMeRich to avoid flow collection issues in a launch
     fun addAMillion() {
         viewModelScope.launch {

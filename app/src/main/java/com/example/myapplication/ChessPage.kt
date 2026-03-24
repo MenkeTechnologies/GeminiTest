@@ -64,7 +64,7 @@ fun ChessPage(
                 style = MaterialTheme.typography.titleMedium,
                 color = if (currentTurn == ChessPieceColor.WHITE) Color.DarkGray else Color.Black
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Board
@@ -95,7 +95,7 @@ fun ChessPage(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Row {
                 Button(onClick = { viewModel.resetGame() }) {
                     Text("Reset")
@@ -131,7 +131,7 @@ fun ChessSquare(
                     .background(Color.Yellow.copy(alpha = 0.4f))
             )
         }
-        
+
         if (piece != null) {
             Text(
                 text = getPieceUnicode(piece),
@@ -153,6 +153,7 @@ fun getPieceUnicode(piece: ChessPiece): String {
             ChessPieceType.QUEEN -> "♕"
             ChessPieceType.KING -> "♔"
         }
+
         ChessPieceColor.BLACK -> when (piece.type) {
             ChessPieceType.PAWN -> "♟"
             ChessPieceType.ROOK -> "♜"
@@ -166,7 +167,7 @@ fun getPieceUnicode(piece: ChessPiece): String {
 
 fun initialChessBoard(): Map<Position, ChessPiece> {
     val board = mutableMapOf<Position, ChessPiece>()
-    
+
     // Black pieces
     board[Position(0, 0)] = ChessPiece(ChessPieceType.ROOK, ChessPieceColor.BLACK)
     board[Position(0, 1)] = ChessPiece(ChessPieceType.KNIGHT, ChessPieceColor.BLACK)

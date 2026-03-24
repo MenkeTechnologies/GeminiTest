@@ -67,7 +67,7 @@ fun TestPage(
                 style = MaterialTheme.typography.titleMedium,
                 color = if (currentTurn == PieceType.BLACK) Color.Black else Color.Red
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Board
@@ -99,7 +99,7 @@ fun TestPage(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Row {
                 Button(onClick = { viewModel.resetGame() }) {
                     Text("Reset")
@@ -136,7 +136,7 @@ fun BoardSquare(
                     .background(Color.Yellow.copy(alpha = 0.4f))
             )
         }
-        
+
         if (piece != null) {
             Box(
                 modifier = Modifier

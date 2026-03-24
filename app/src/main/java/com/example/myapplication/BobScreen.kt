@@ -38,7 +38,7 @@ fun CircusTent(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(200.dp)) {
         val width = size.width
         val height = size.height
-        
+
         // Roof
         val roofPath = Path().apply {
             moveTo(width / 2, 0f)
@@ -47,7 +47,7 @@ fun CircusTent(modifier: Modifier = Modifier) {
             close()
         }
         drawPath(path = roofPath, color = Color.Red)
-        
+
         // Stripes on roof
         for (i in 1 until 5) {
             val x = width * (i / 5f)
@@ -65,7 +65,7 @@ fun CircusTent(modifier: Modifier = Modifier) {
             topLeft = Offset(0f, height * 0.4f),
             size = androidx.compose.ui.geometry.Size(width, height * 0.6f)
         )
-        
+
         // Door
         val doorWidth = width * 0.3f
         val doorHeight = height * 0.4f
@@ -114,11 +114,11 @@ fun BobScreen(
         Spacer(modifier = Modifier.height(32.dp))
         Text(text = "🎪 Bob's Circus 🎪", style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         CircusTent(modifier = Modifier.padding(16.dp))
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -130,7 +130,7 @@ fun BobScreen(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        
+
         Button(onClick = onNavigateBack) {
             Text("Back to Home")
         }

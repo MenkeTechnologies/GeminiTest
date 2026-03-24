@@ -76,7 +76,11 @@ fun DawScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = neonCyan)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = neonCyan
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
@@ -100,23 +104,46 @@ fun DawScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { if (!isPlaying) viewModel.togglePlayback() }) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = if (isPlaying) neonGreen else Color.Gray)
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        contentDescription = "Play",
+                        tint = if (isPlaying) neonGreen else Color.Gray
+                    )
                 }
                 IconButton(onClick = { if (isPlaying) viewModel.togglePlayback() }) {
-                    Icon(Icons.Default.Stop, contentDescription = "Stop", tint = if (!isPlaying) neonMagenta else Color.Gray)
+                    Icon(
+                        Icons.Default.Stop,
+                        contentDescription = "Stop",
+                        tint = if (!isPlaying) neonMagenta else Color.Gray
+                    )
                 }
                 Text("BPM: 128", color = neonCyan, fontFamily = FontFamily.Monospace)
-                
+
                 if (isPlaying) {
-                    Text("ONLINE", color = neonGreen, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(
+                        "ONLINE",
+                        color = neonGreen,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
                 } else {
-                    Text("STANDBY", color = Color.Red, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(
+                        "STANDBY",
+                        color = Color.Red,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("> INITIALIZING_TRACK_STACK", color = neonGreen, fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+            Text(
+                "> INITIALIZING_TRACK_STACK",
+                color = neonGreen,
+                fontFamily = FontFamily.Monospace,
+                fontSize = 12.sp
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -124,16 +151,16 @@ fun DawScreen(
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 itemsIndexed(trackNames) { index, name ->
                     HackerTrackItem(
-                        name = name, 
+                        name = name,
                         volume = trackVolumes[index],
                         onVolumeChange = { viewModel.updateVolume(index, it) },
-                        neonCyan = neonCyan, 
+                        neonCyan = neonCyan,
                         neonMagenta = neonMagenta,
                         isPlaying = isPlaying
                     )
                 }
             }
-            
+
             if (isPlaying) {
                 Spacer(modifier = Modifier.weight(1f))
                 SpectrumAnalyzer(neonCyan)
@@ -144,10 +171,10 @@ fun DawScreen(
 
 @Composable
 fun HackerTrackItem(
-    name: String, 
-    volume: Float, 
+    name: String,
+    volume: Float,
     onVolumeChange: (Float) -> Unit,
-    neonCyan: Color, 
+    neonCyan: Color,
     neonMagenta: Color,
     isPlaying: Boolean
 ) {
@@ -160,9 +187,20 @@ fun HackerTrackItem(
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(name, color = Color.White, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(
+                    name,
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
                 Spacer(modifier = Modifier.weight(1f))
-                Text("${(volume * 100).toInt()}%", color = neonCyan, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                Text(
+                    "${(volume * 100).toInt()}%",
+                    color = neonCyan,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Slider(
@@ -175,7 +213,7 @@ fun HackerTrackItem(
                 ),
                 modifier = Modifier.height(24.dp)
             )
-            
+
             if (isPlaying) {
                 TrackVisualizer(neonCyan, volume)
             }
@@ -196,7 +234,9 @@ fun TrackVisualizer(color: Color, volume: Float) {
         label = "phase"
     )
 
-    Canvas(modifier = Modifier.fillMaxWidth().height(10.dp)) {
+    Canvas(modifier = Modifier
+        .fillMaxWidth()
+        .height(10.dp)) {
         val bars = 30
         val barWidth = size.width / bars
         for (i in 0 until bars) {
@@ -223,7 +263,12 @@ fun SpectrumAnalyzer(color: Color) {
         label = "phase"
     )
 
-    Canvas(modifier = Modifier.fillMaxWidth().height(60.dp).border(1.dp, color.copy(alpha = 0.2f))) {
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .border(1.dp, color.copy(alpha = 0.2f))
+    ) {
         val points = 50
         val step = size.width / points
         for (i in 0 until points) {
